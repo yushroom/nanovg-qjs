@@ -319,21 +319,25 @@ FUNC(TextBounds)
 	return JS_NewFloat64(ctx, ret);
 }
 
-//FUNC(TextBounds2)
-//{
-//	float x, y;
-//	const char *str = NULL;
-//	assert(argc == 3);
-//	JS_ToFloat32(ctx, &x, argv[0]);
-//	JS_ToFloat32(ctx, &y, argv[1]);
-//	str = JS_ToCString(ctx, argv[2]);
-//	float bounds[4] = {};
-//	float tw = nvgTextBounds(g_NVGcontext, x, y, str, NULL, bounds);
-//	JSValue e = JS_NewObject(ctx);
-//	JS_DefinePropertyValueStr(ctx, e, "width", JS_NewFloat64(ctx, tw), JS_PROP_C_W_E);
-//	JS_DefinePropertyValueStr(ctx, e, "height", JS_NewFloat64(ctx, bounds[3]-bounds[1]), JS_PROP_C_W_E);
-//	return e;
-//}
+FUNC(TextBounds2)
+{
+	float x, y;
+	const char *str = NULL;
+	if (argc != 3)
+		return JS_EXCEPTION;
+	if (JS_ToFloat32(ctx, &x, argv[0]) ||
+		JS_ToFloat32(ctx, &y, argv[1]))
+	return JS_EXCEPTION;
+	str = JS_ToCString(ctx, argv[2]);
+	if (!str)
+		return JS_EXCEPTION;
+	float bounds[4] = {};
+	float tw = nvgTextBounds(g_NVGcontext, x, y, str, NULL, bounds);
+	JSValue e = JS_NewObject(ctx);
+	JS_DefinePropertyValueStr(ctx, e, "width", JS_NewFloat64(ctx, tw), JS_PROP_C_W_E);
+	JS_DefinePropertyValueStr(ctx, e, "height", JS_NewFloat64(ctx, bounds[3]-bounds[1]), JS_PROP_C_W_E);
+	return e;
+}
 
 
 FUNC(FontSize)
@@ -424,7 +428,7 @@ static const JSCFunctionListEntry js_nanovg_funcs[] = {
 	_JS_CFUNC_DEF(BoxGradient, 8),
 	_JS_CFUNC_DEF(RadialGradient, 6),
 	_JS_CFUNC_DEF(TextBounds, 3),
-//	_JS_CFUNC_DEF(TextBounds2, 3),
+	_JS_CFUNC_DEF(TextBounds2, 3),
 	_JS_CFUNC_DEF(Rect, 4),
 	_JS_CFUNC_DEF(Circle, 3),
 	_JS_CFUNC_DEF(PathWinding, 1),
